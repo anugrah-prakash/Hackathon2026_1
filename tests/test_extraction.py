@@ -51,7 +51,7 @@ class ExtractionTests(unittest.TestCase):
     def test_python_311_syntax(self):
         for path in Path('.').rglob('*.py'):
             if '.venv' not in path.parts:
-                ast.parse(path.read_text(), feature_version=(3, 11))
+                ast.parse(path.read_text(encoding='utf-8'), feature_version=(3, 11))
 
 if __name__ == '__main__':
     unittest.main()
