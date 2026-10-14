@@ -25,9 +25,13 @@ def clear():
     st.session_state['letter'] = ''
     st.session_state['upload_version'] = st.session_state.get('upload_version', 0) + 1
 
-st.title('LetterEase AI')
-st.write('Understand your German letter in simple English.')
-st.caption('Type a letter, upload a document, or take a photo. Review the text before explaining it.')
+header_left, header_right = st.columns([2.6, 1])
+with header_left:
+    st.title('LetterEase AI')
+    st.write('Understand your German letter in simple English.')
+    st.caption('Type a letter, upload a document, or take a photo. Review the text before explaining it.')
+with header_right:
+    st.image(Path(__file__).with_name('assets') / 'hero.svg', width=220, output_format='SVG')
 api_key = setting('TRUSTEDTOKENS_API_KEY')
 model = setting('TRUSTEDTOKENS_MODEL', 'zai-org/GLM-5.3')
 if not api_key or api_key.startswith('replace_'):
