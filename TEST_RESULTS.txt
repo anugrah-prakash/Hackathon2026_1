@@ -1,0 +1,29 @@
+Validation performed on 14 October 2026
+
+PASS: All Python files compile under the available Python 3.12.14 runtime.
+PASS: All Python source parses using Python 3.11 syntax rules.
+PASS: Isolated core parsing/formatting checks preserve example dates, amounts and
+reference numbers and produce exactly three sections.
+PASS: Isolated parser rejects invalid JSON, missing sections and extra keys.
+
+NOT RUN: Full unittest suite and Streamlit UI smoke test. This environment could
+not install requirements (package resolver reported no available Streamlit version).
+Requests was not installed, so the initial unittest attempt failed at import.
+NOT RUN: Execution on actual Python 3.11.4; that interpreter was not available.
+NOT RUN: Live TrustedTokens call; no account API key supplied.
+NOT RUN: Streamlit Community Cloud deployment.
+
+To complete validation locally, install requirements in a Python 3.11.4 virtual
+environment, run python -m unittest discover -s tests -v, launch the app, and
+use sample_letter.txt with your TrustedTokens key.
+
+File and camera update — 14 October 2026
+PASS: Seven extraction tests under Python 3.12.14, using available Pillow/PDFium:
+UTF-8 value preservation; empty/oversized/unsupported/invalid-text rejection;
+JPEG loading with mocked OCR; real two-page PDF rendering with mocked OCR;
+blank OCR rejection; damaged PDF rejection; Python 3.11 syntax parsing.
+PASS: Updated Python sources compile.
+NOT RUN: Real Tesseract OCR or browser camera capture (runtime unavailable).
+NOT RUN: DOCX/ODT/RTF runtime extraction (dependencies unavailable here).
+NOT RUN: Full Streamlit UI, full core suite, live API or hosted deployment.
+The OCR test verifies image/PDF plumbing, not recognition accuracy.
