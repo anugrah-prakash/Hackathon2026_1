@@ -123,7 +123,7 @@ does not persist letters or explanations or cache them across users. Uploaded fi
 are processed on the app server. Tesseract uses temporary image/text files that its
 wrapper removes after processing; temporary files are not durable storage.
 Input and results remain in the browser/Streamlit session until cleared or the
-session ends. Clear removes the app's current input and result; it cannot delete
+session ends. **Start over** removes the app's current input and result; it cannot delete
 data already received by the API provider. Consult the provider's own data terms.
 
 This version accepts typed text, PDFs (including scans), Word DOCX, ODT, RTF,
@@ -238,7 +238,8 @@ take a photo with the device camera app and upload the saved image.
 - Photograph the sample letter and check German characters and reference digits.
 - Append a second photo, then verify both pages appear in the text box.
 - Reject an empty file, oversized file and unsupported `.doc` input.
-- Clear should remove text/results and reset the upload and camera widgets.
+- **Start over** should remove text/results and reset the upload and camera widgets.
+- After reading a file or picture, the picker/camera should reset so the next document or page can be brought in.
 
 OCR references: https://github.com/madmaze/pytesseract and
 https://tesseract-ocr.github.io/tessdoc/Installation.html

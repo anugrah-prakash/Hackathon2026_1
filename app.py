@@ -39,7 +39,10 @@ def load_source(source, append=False, full_ocr=False):
             raise ExtractionError('Combined text exceeds 30,000 characters. Clear the text or use a shorter document.')
         st.session_state['letter'] = combined
         st.session_state['extraction_notes'] = notes
-        st.success('Text loaded below. Review it before selecting Explain letter.')
+        # Reset the file/camera widgets so the next page or document can be brought in.
+        st.session_state['upload_version'] = st.session_state.get('upload_version', 0) + 1
+        st.success('Text loaded below. Review it before selecting Explain letter. '
+                   'The file and camera inputs are reset for the next page or document.')
     except ExtractionError as exc:
         st.error(str(exc))
 
@@ -80,7 +83,8 @@ else:
 version = st.session_state.get('upload_version', 0)
 
 # --- Input methods: tabs replace the old sidebar radio; extraction stays
-# button-driven, and clear() remounts the widgets with fresh keys. ---
+# button-driven. clear() and every successful read remount the file/camera
+# widgets with fresh keys, so a new document can always be brought in. ---
 section_label('Bring your letter')
 tab_paste, tab_upload, tab_photo = st.tabs(['Type or paste', 'Upload a file', 'Take a picture'])
 with tab_paste, st.container(border=True):
@@ -88,7 +92,7 @@ with tab_paste, st.container(border=True):
                'read a document or photo first, then edit the combined text.')
 with tab_upload, st.container(border=True):
     upload = st.file_uploader('Choose a document or image (up to 20 MB)', type=EXTENSIONS, key=f'upload_{version}')
-    st.caption('PDF, Word .docx, ODT, RTF, TXT, Markdown, CSV, JPG, PNG, WEBP, BMP and TIFF. Convert older .doc files to .docx or PDF.')
+    st.caption('PDF, Word .docx, ODT, RTF, TXT, Markdown, CSV, JPG, PNG, WEBP, BMP and TIFF. Convert older .doc files to .docx or PDF. After a successful read the picker resets, ready for the next document.')
     full_ocr = st.checkbox('Use full-page OCR for PDF (useful for scanned or mixed-content pages)')
     append_upload = st.checkbox('Append to existing text', key='append_upload')
     if st.button('Read uploaded file', disabled=upload is None,
@@ -116,8 +120,8 @@ with st.container(border=True):
     left, right = st.columns([3, 1])
     submitted = left.button('Explain letter', type='primary', disabled=not letter.strip(),
                            help='Send the reviewed text to TrustedTokens for a plain-English explanation.')
-    right.button('Clear', on_click=clear,
-                 help='Clear the letter text and the current explanation.')
+    right.button('Start over', on_click=clear,
+                 help='Clear the letter text and explanation, and reset the file and camera inputs for a new letter.')
 
 if st.session_state.get('source') != letter:
     st.session_state.pop('result', None)
@@ -138,6 +142,8 @@ if st.session_state.get('result'):
         st.text(st.session_state['result'])
         st.download_button('Download explanation', st.session_state['result'], 'letter-explanation.txt', mime='text/plain',
                            help='Save the explanation as a plain-text file.')
+        st.button('Start over — explain another letter', on_click=clear,
+                  help='Clear the letter text and explanation, and reset the file and camera inputs.')
         st.caption('Check dates, amounts and reference numbers against the original. AI output may contain mistakes.')
 
 # --- Footer ---
