@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 import streamlit as st
 from dotenv import load_dotenv
-from theme import apply_theme, app_header, section_label
+from theme import (apply_theme, render_nav, render_hero, render_steps,
+                   render_footer, section_label, metric_tile, anchor)
 from extraction import EXTENSIONS, ExtractionError, extract
 from core import MAX_CHARS, LetterEaseError, explain_letter, format_result
 
@@ -27,12 +28,6 @@ def clear():
     st.session_state['letter'] = ''
     st.session_state['upload_version'] = st.session_state.get('upload_version', 0) + 1
 
-app_header('LetterEase AI',
-           'Understand your German letter in simple English. '
-           'Type a letter, upload a document, or take a photo. Review the text before explaining it.')
-api_key = setting('TRUSTEDTOKENS_API_KEY')
-model = setting('TRUSTEDTOKENS_MODEL', 'zai-org/GLM-5.3')
-
 def load_source(source, append=False, full_ocr=False):
     st.session_state.pop('result', None)
     try:
@@ -48,34 +43,64 @@ def load_source(source, append=False, full_ocr=False):
     except ExtractionError as exc:
         st.error(str(exc))
 
+api_key = setting('TRUSTEDTOKENS_API_KEY')
+model = setting('TRUSTEDTOKENS_MODEL', 'zai-org/GLM-5.3')
+api_ready = bool(api_key) and not api_key.startswith('replace_')
+
+# --- Top navigation and hero (reguly.de-style page chrome) ---
+render_nav()
+render_hero('Understand your German letter in simple English. '
+            'Type a letter, upload a document, or take a photo. Review the text before explaining it.')
+
+# --- How it works ---
+anchor('how-it-works')
+section_label('How it works')
+render_steps()
+
+# --- Workspace: status metrics (compliance-score style) ---
+# Note: values are read before the widgets below render, so tiles refresh on
+# the next interaction after a change (tab switches do not re-run the script).
+anchor('workspace')
+section_label('Your letter workspace')
+letter_len = len(st.session_state.get('letter', ''))
+has_result = bool(st.session_state.get('result'))
+cols = st.columns(3)
+with cols[0]:
+    metric_tile('Setup', 'Configured' if api_ready else 'Setup needed', 'ok' if api_ready else 'warn')
+with cols[1]:
+    metric_tile('Letter text', f'{letter_len:,} / {MAX_CHARS:,}', 'teal')
+with cols[2]:
+    metric_tile('Explanation', 'Ready' if has_result else 'Pending', 'ok' if has_result else '')
+st.progress(min(int(letter_len * 100 / MAX_CHARS), 100) if letter_len else 0)
+if not api_ready:
+    st.info('Setup needed: add your TrustedTokens API key to .env locally or to Streamlit Secrets when hosted.')
+else:
+    st.success('API key configured.')
+
 version = st.session_state.get('upload_version', 0)
 
-# --- Sidebar: setup and letter input ---
-with st.sidebar:
-    section_label('Setup')
-    if not api_key or api_key.startswith('replace_'):
-        st.info('Setup needed: add your TrustedTokens API key to .env locally or to Streamlit Secrets when hosted.')
-    else:
-        st.success('API key configured.')
-
-    section_label('Enter your letter')
-    method = st.radio('How would you like to enter your letter?',
-                      ['Type or paste', 'Upload a file', 'Take a picture'])
-    if method == 'Upload a file':
-        upload = st.file_uploader('Choose a document or image (up to 20 MB)', type=EXTENSIONS, key=f'upload_{version}')
-        st.caption('PDF, Word .docx, ODT, RTF, TXT, Markdown, CSV, JPG, PNG, WEBP, BMP and TIFF. Convert older .doc files to .docx or PDF.')
-        full_ocr = st.checkbox('Use full-page OCR for PDF (useful for scanned or mixed-content pages)')
-        append = st.checkbox('Append to existing text', key='append_upload')
-        if st.button('Read uploaded file', disabled=upload is None,
-                     help='Extract text from the selected file into the editor.'):
-            load_source(upload, append, full_ocr)
-    elif method == 'Take a picture':
-        st.caption('Allow camera access. Keep the whole page visible, flat and well lit. Capture and append each page of a multi-page letter.')
-        photo = st.camera_input('Take a picture of the letter', key=f'camera_{version}')
-        append = st.checkbox('Append this page to existing text', key='append_camera')
-        if st.button('Read this picture', disabled=photo is None,
-                     help='Extract text from the captured photo into the editor.'):
-            load_source(photo, append)
+# --- Input methods: tabs replace the old sidebar radio; extraction stays
+# button-driven, and clear() remounts the widgets with fresh keys. ---
+section_label('Bring your letter')
+tab_paste, tab_upload, tab_photo = st.tabs(['Type or paste', 'Upload a file', 'Take a picture'])
+with tab_paste, st.container(border=True):
+    st.caption('Type or paste your German letter directly into the editor below. You can also mix methods: '
+               'read a document or photo first, then edit the combined text.')
+with tab_upload, st.container(border=True):
+    upload = st.file_uploader('Choose a document or image (up to 20 MB)', type=EXTENSIONS, key=f'upload_{version}')
+    st.caption('PDF, Word .docx, ODT, RTF, TXT, Markdown, CSV, JPG, PNG, WEBP, BMP and TIFF. Convert older .doc files to .docx or PDF.')
+    full_ocr = st.checkbox('Use full-page OCR for PDF (useful for scanned or mixed-content pages)')
+    append_upload = st.checkbox('Append to existing text', key='append_upload')
+    if st.button('Read uploaded file', disabled=upload is None,
+                 help='Extract text from the selected file into the editor.'):
+        load_source(upload, append_upload, full_ocr)
+with tab_photo, st.container(border=True):
+    st.caption('Allow camera access. Keep the whole page visible, flat and well lit. Capture and append each page of a multi-page letter.')
+    photo = st.camera_input('Take a picture of the letter', key=f'camera_{version}')
+    append_camera = st.checkbox('Append this page to existing text', key='append_camera')
+    if st.button('Read this picture', disabled=photo is None,
+                 help='Extract text from the captured photo into the editor.'):
+        load_source(photo, append_camera)
 
 # --- Workspace: letter editor ---
 with st.container(border=True):
@@ -114,3 +139,6 @@ if st.session_state.get('result'):
         st.download_button('Download explanation', st.session_state['result'], 'letter-explanation.txt', mime='text/plain',
                            help='Save the explanation as a plain-text file.')
         st.caption('Check dates, amounts and reference numbers against the original. AI output may contain mistakes.')
+
+# --- Footer ---
+render_footer()

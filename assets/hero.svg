@@ -1,35 +1,35 @@
 <svg viewBox="0 0 320 260" width="320" height="260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LetterEase AI illustration">
   <!-- soft backdrop -->
-  <circle cx="160" cy="132" r="112" fill="#e6f4ff"/>
-  <circle cx="272" cy="44" r="9" fill="#f7bd69"/>
-  <circle cx="42" cy="188" r="7" fill="#4fc3b8"/>
-  <circle cx="286" cy="204" r="5" fill="#c8dcff"/>
+  <circle cx="160" cy="132" r="112" fill="#ccfbf1"/>
+  <circle cx="272" cy="44" r="9" fill="#0e2240"/>
+  <circle cx="42" cy="188" r="7" fill="#14b8a6"/>
+  <circle cx="286" cy="204" r="5" fill="#dbe4ee"/>
 
   <!-- letter card -->
   <g class="letter-card">
-    <rect x="88" y="30" width="150" height="180" rx="14" fill="#ffffff" stroke="#b9d4f2" stroke-width="2"/>
+    <rect x="88" y="30" width="150" height="180" rx="14" fill="#ffffff" stroke="#dbe4ee" stroke-width="2"/>
     <!-- German flag tab -->
     <rect x="88" y="30" width="150" height="12" rx="6" fill="#2b2b2b"/>
     <rect x="88" y="42" width="150" height="12" fill="#dd2c2c"/>
     <rect x="88" y="54" width="150" height="12" rx="6" fill="#f5c518"/>
     <!-- text lines -->
-    <path d="M106 88h74" stroke="#8fb8e8" stroke-width="7" stroke-linecap="round"/>
-    <path d="M106 108h114M106 126h96M106 144h108" stroke="#dde7f5" stroke-width="7" stroke-linecap="round"/>
+    <path d="M106 88h74" stroke="#14b8a6" stroke-width="7" stroke-linecap="round"/>
+    <path d="M106 108h114M106 126h96M106 144h108" stroke="#c3cfdd" stroke-width="7" stroke-linecap="round"/>
     <!-- translation chip: DE -> EN -->
-    <rect x="102" y="162" width="122" height="34" rx="10" fill="#e9f7f0"/>
-    <text x="118" y="184" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#087f73">DE</text>
-    <path d="M142 179h22m-6-7 7 7-7 7" fill="none" stroke="#087f73" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="172" y="184" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#087f73">EN</text>
+    <rect x="102" y="162" width="122" height="34" rx="10" fill="#ccfbf1"/>
+    <text x="118" y="184" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#0d9488">DE</text>
+    <path d="M142 179h22m-6-7 7 7-7 7" fill="none" stroke="#0d9488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="172" y="184" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" fill="#0d9488">EN</text>
   </g>
 
   <!-- envelope -->
   <g class="envelope">
-    <rect x="152" y="176" width="122" height="72" rx="12" fill="#3f7fd9"/>
-    <path d="M160 190 213 219l53-29" fill="none" stroke="#dcebff" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="152" y="176" width="122" height="72" rx="12" fill="#14b8a6"/>
+    <path d="M160 190 213 219l53-29" fill="none" stroke="#e6fffa" stroke-width="3" stroke-linejoin="round"/>
   </g>
 
   <!-- AI sparkles -->
-  <g class="sparkles" stroke="#7aa7e0" stroke-width="3" stroke-linecap="round">
+  <g class="sparkles" stroke="#14b8a6" stroke-width="3" stroke-linecap="round">
     <path d="M60 66v16m-8-8h16"/>
     <path d="M258 116v12m-6-6h12"/>
   </g>
